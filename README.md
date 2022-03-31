@@ -17,6 +17,7 @@ datamodel-codegen \
 
 ### Dependencies
 
+* pydantic>=1.9.0
 * PyYAML>=6.0
 * mergedeep>=1.3.4
 
@@ -51,6 +52,8 @@ Alexandros Monastiriotis alexmondev@gmail.com
 
 ## Version History
 
+* 0.1.1
+    * Add missing dependency
 * 0.1.0
     * Initial Release
 
