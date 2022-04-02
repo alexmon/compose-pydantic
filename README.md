@@ -34,7 +34,7 @@ Read multiple compose files
 from compose_pydantic import ComposeSpecificationFactory
 
 csf = ComposeSpecificationFactory()
-compose = csf(['tests/compose/docker-compose.yml', 'tests/compose/docker-compose.override.yml'])
+compose = csf(source='tests/compose/docker-compose.yml', overrides=['tests/compose/docker-compose.override.yml'])
 
 print(compose.__dict__)
 ```
@@ -52,6 +52,8 @@ Alexandros Monastiriotis alexmondev@gmail.com
 
 ## Version History
 
+* 0.2.0
+    * Change API
 * 0.1.1
     * Add missing dependency
 * 0.1.0

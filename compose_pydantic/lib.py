@@ -1,4 +1,6 @@
 from abc import ABC, abstractmethod
+from os import PathLike
+from typing import Any, Union
 
 from mergedeep import merge, Strategy
 from yaml import safe_load
@@ -6,40 +8,42 @@ from yaml import safe_load
 from .models import ComposeSpecification
 
 
+StrOrBytesPath = Union[str, bytes, PathLike[str], PathLike[bytes]]
+
+
 class ReadSpecStrategyABC(ABC):
     @abstractmethod
-    def read_specs(self, arg_list: list) -> dict:
+    def read_specs(self, source: Any, overrides: list) -> dict:
         pass
 
 
 class DictSpecStrategy(ReadSpecStrategyABC):
-    def read_specs(self, compose_dict_list: list) -> dict:
+    def read_specs(self, source: dict, overrides: list[dict]) -> dict:
         """
-        Reduce list of dict to a dict
+        Work on dict represantations
 
-        :param compose_dict_list:
-        :returns:
         :raises: any of (YAMLError, ValidationError)
         """
-        compose_data = {}
-        for compose_dict in compose_dict_list:
+        compose_data = source
+        for compose_dict in overrides:
             merge(compose_data, compose_dict, strategy=Strategy.REPLACE)
 
         return compose_data
 
 
 class FileSpecStrategy(ReadSpecStrategyABC):
-    def read_specs(self, compose_file_list: list) -> dict:
+    def read_specs(self, source: StrOrBytesPath, overrides: list[StrOrBytesPath]) -> dict:
         """
         Read list of files adhere to Compose specification and return a dict
 
-        :param compose_file_list: a list of values accepted by builtin function `open`
+        :param source:
+        :param overrides: a list of values accepted by builtin function `open`
                             same key values from rightmost files will be preserved
-        :returns:
         :raises: any of (OSError, YAMLError, ValidationError)
         """
-        compose_data = {}
-        for compose_file in compose_file_list:
+        with open(source, 'r') as fh:
+            compose_data = safe_load(fh)
+        for compose_file in overrides:
             with open(compose_file, 'r') as fh:
                 data = safe_load(fh)
             merge(compose_data, data, strategy=Strategy.REPLACE)
@@ -48,16 +52,14 @@ class FileSpecStrategy(ReadSpecStrategyABC):
 
 
 class TextSpecStrategy(ReadSpecStrategyABC):
-    def read_specs(self, compose_text_list: list) -> dict:
+    def read_specs(self, source: str, overrides: list[str]) -> dict:
         """
         Parse list of strings adhere to Compose specification and return a dict
 
-        :param compose_text_list:
-        :returns:
         :raises: any of (YAMLError, ValidationError)
         """
-        compose_data = {}
-        for compose_text in compose_text_list:
+        compose_data = safe_load(source)
+        for compose_text in overrides:
             data = safe_load(compose_text)
             merge(compose_data, data, strategy=Strategy.REPLACE)
 
@@ -68,8 +70,8 @@ class ComposeSpecificationFactory:
     def __init__(self, strategy: ReadSpecStrategyABC = None):
         self._strategy = strategy if strategy else FileSpecStrategy()
 
-    def __call__(self, arg_list=[]) -> ComposeSpecification:
-        specs_dict = self._strategy.read_specs(arg_list)
+    def __call__(self, source, overrides=[]) -> ComposeSpecification:
+        specs_dict = self._strategy.read_specs(source, overrides)
         return self._parse(specs_dict)
 
     @property
