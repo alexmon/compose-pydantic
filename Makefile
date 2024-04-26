@@ -1,4 +1,6 @@
-
+init:
+	pip install -q tox==4.13.0
+	pip install -e .
 test: clean-cache
 	pip install -q -e '.[testing]' \
 	&& tox -e test
@@ -11,7 +13,7 @@ clean: clean-cache
 
 clean-cache: clean-cache
 	rm -rf tmp.pypi* dist/* build/* \
-	&& rm -rf src/*.egg-info/
+	&& rm -rf src/*.egg-info/ *.egg-info/
 	find . -name '*.tmp.*' -delete
 	find . -name '*.pyc' -delete
 	find . -name  __pycache__ -delete
