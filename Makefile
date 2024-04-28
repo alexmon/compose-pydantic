@@ -1,15 +1,23 @@
-test: cleancache
-	pytest ./tests
+init:
+	pip install -q tox==4.13.0
+	pip install -e .
+test: clean-cache
+	pip install -q -e '.[testing]' \
+	&& tox -e test
 
 lint:
-	flake8 --config .flake8 compose_pydantic
+	# flake8 --config .flake8 compose_pydantic
+	tox -e static-analysis
 
-cleancache:
-	rm -Rf .pytest_cache
-	cd compose_pydantic ; python3 -Bc "for p in __import__('pathlib').Path('.').rglob('*.py[co]'): p.unlink()"
-	cd compose_pydantic ; python3 -Bc "for p in __import__('pathlib').Path('.').rglob('__pycache__'): p.rmdir()"
-	cd tests ; python3 -Bc "for p in __import__('pathlib').Path('.').rglob('*.py[co]'): p.unlink()"
-	cd tests ; python3 -Bc "for p in __import__('pathlib').Path('.').rglob('__pycache__'): p.rmdir()"
+clean: clean-cache
+
+clean-cache: clean-cache
+	rm -rf tmp.pypi* dist/* build/* \
+	&& rm -rf src/*.egg-info/ *.egg-info/
+	find . -name '*.tmp.*' -delete
+	find . -name '*.pyc' -delete
+	find . -name  __pycache__ -delete
+	find . -type d -name .tox | xargs -n1 -I% bash -x -c "rm -rf %"
 
 build: lint test
 	python3 -m build
