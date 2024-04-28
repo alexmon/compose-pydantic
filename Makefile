@@ -1,4 +1,5 @@
 init:
+	pip install build
 	pip install -q tox==4.13.0
 	pip install -e .
 test: clean-cache
