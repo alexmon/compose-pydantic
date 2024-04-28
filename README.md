@@ -60,6 +60,8 @@ Alexandros Monastiriotis alexmondev@gmail.com
 
 ## Version History
 
+* 0.2.1
+    * Updated layout + dependencies
 * 0.2.0
     * Change API
 * 0.1.1
