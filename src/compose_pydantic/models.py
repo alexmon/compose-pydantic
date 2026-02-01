@@ -553,7 +553,7 @@ class ComposeSpecification(BaseModel):
         Dict[Annotated[str, StringConstraints(pattern=r"^[a-zA-Z0-9._-]+$")], Network]
     ] = None
     volumes: Optional[
-        Dict[Annotated[str, StringConstraints(pattern=r"^[a-zA-Z0-9._-]+$")], Volume]
+        Dict[Annotated[str, StringConstraints(pattern=r"^[a-zA-Z0-9._-]+$")], Optional[Volume]]
     ] = None
     secrets: Optional[
         Dict[Annotated[str, StringConstraints(pattern=r"^[a-zA-Z0-9._-]+$")], Secret]
