@@ -557,6 +557,6 @@ class ComposeSpecification(BaseModel):
     )
     services: Optional[Dict[constr(regex=r'^[a-zA-Z0-9._-]+$'), Service]] = None
     networks: Optional[Dict[constr(regex=r'^[a-zA-Z0-9._-]+$'), Network]] = None
-    volumes: Optional[Dict[constr(regex=r'^[a-zA-Z0-9._-]+$'), Volume]] = None
+    volumes: Optional[Dict[constr(regex=r'^[a-zA-Z0-9._-]+$'), Optional[Volume]]] = None
     secrets: Optional[Dict[constr(regex=r'^[a-zA-Z0-9._-]+$'), Secret]] = None
     configs: Optional[Dict[constr(regex=r'^[a-zA-Z0-9._-]+$'), Config]] = None
