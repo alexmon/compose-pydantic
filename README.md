@@ -17,7 +17,7 @@ datamodel-codegen \
 
 ### Dependencies
 
-* pydantic==1.9.0
+* pydantic>=2.0.0
 * PyYAML>=6.0
 * mergedeep>=1.3.4
 
@@ -59,7 +59,8 @@ See also `tests/test_lib.py` for the different ways you may use the factory clas
 Alexandros Monastiriotis alexmondev@gmail.com
 
 ## Version History
-
+* 0.2.2
+    *  Update for pydantic v2    
 * 0.2.1
     * Updated layout + dependencies
 * 0.2.0

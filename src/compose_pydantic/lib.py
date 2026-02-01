@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 from os import PathLike
-from typing import Any, Union
+from typing import Any, Optional, Union
 
 from mergedeep import merge, Strategy
 from yaml import safe_load
@@ -32,7 +32,9 @@ class DictSpecStrategy(ReadSpecStrategyABC):
 
 
 class FileSpecStrategy(ReadSpecStrategyABC):
-    def read_specs(self, source: StrOrBytesPath, overrides: list[StrOrBytesPath]) -> dict:
+    def read_specs(
+        self, source: StrOrBytesPath, overrides: list[StrOrBytesPath]
+    ) -> dict:
         """
         Read list of files adhere to Compose specification and return a dict
 
@@ -41,10 +43,10 @@ class FileSpecStrategy(ReadSpecStrategyABC):
                             same key values from rightmost files will be preserved
         :raises: any of (OSError, YAMLError, ValidationError)
         """
-        with open(source, 'r') as fh:
+        with open(source, "r") as fh:
             compose_data = safe_load(fh)
         for compose_file in overrides:
-            with open(compose_file, 'r') as fh:
+            with open(compose_file, "r") as fh:
                 data = safe_load(fh)
             merge(compose_data, data, strategy=Strategy.REPLACE)
 
@@ -67,7 +69,7 @@ class TextSpecStrategy(ReadSpecStrategyABC):
 
 
 class ComposeSpecificationFactory:
-    def __init__(self, strategy: ReadSpecStrategyABC = None):
+    def __init__(self, strategy: Optional[ReadSpecStrategyABC] = None):
         self._strategy = strategy if strategy else FileSpecStrategy()
 
     def __call__(self, source, overrides=[]) -> ComposeSpecification:
